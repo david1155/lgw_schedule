@@ -69,9 +69,7 @@ def read_content(gzip_data):
     # expand compressed data and check byte lengths
     json_data = zlib.decompress(gzip_data)
 
-    # parse JSON content
-    content = json.loads(json_data)
-    return content
+    return json.loads(json_data)
 
 
 def inspect_flight(flight_id, values):
@@ -112,9 +110,6 @@ def inspect_flight(flight_id, values):
             if eta != old_eta:
                 flights[flight] = eta
                 update_table(flight, flight_iata, origin, eta, last_update)
-            else:
-                # 2. ETA not changed
-                pass
         else:
             # 3. new flight, not in table
             flights[flight] = eta
