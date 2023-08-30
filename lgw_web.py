@@ -49,7 +49,7 @@ def scrape_diff_db():
 
     for k, v in scraped.items():
         # convert time to datetime (here, because unable to pass datetime through function return)
-        now = datetime.today()
+        now = datetime.now()
         # workaround fix timezone
         v['sched_time'] = datetime.fromtimestamp(int(v['sched_time'])) - timedelta(hours=2)
         # workaround with date in status, may be not correct when day changes. and convert to UTC timezone
@@ -66,15 +66,7 @@ def scrape_diff_db():
                    'sched_time': v['sched_time']})
 
         # 1. check if flight exists in local schedule and changed
-        if k in timetable:
-            if timetable[k] != params:
-                timetable[k] = params
-                update_table(k, v['origin'], v['status'], v['status_time'], v['sched_time'])
-            else:
-                # 2. if not changed
-                pass
-        else:
-            # 3. create if not exists
+        if k in timetable and timetable[k] != params or k not in timetable:
             timetable[k] = params
             update_table(k, v['origin'], v['status'], v['status_time'], v['sched_time'])
 

@@ -38,7 +38,7 @@ class EventProcessor(AbstractEventProcessor):
         """
         Called by processor host to initialize the event processor.
         """
-        logging.info("Connection established {}".format(context.partition_id))
+        logging.info(f"Connection established {context.partition_id}")
 
     async def close_async(self, context, reason):
         """
@@ -46,11 +46,9 @@ class EventProcessor(AbstractEventProcessor):
         :param context: Information about the partition
         :type context: ~azure.eventprocessorhost.PartitionContext
         """
-        logging.info("Connection closed (reason {}, id {}, offset {}, sq_number {})".format(
-            reason,
-            context.partition_id,
-            context.offset,
-            context.sequence_number))
+        logging.info(
+            f"Connection closed (reason {reason}, id {context.partition_id}, offset {context.offset}, sq_number {context.sequence_number})"
+        )
 
     async def process_events_async(self, context, messages):
         """
@@ -114,8 +112,7 @@ class DummyLease(Lease):
         """
         Returns Serializable instance of `__dict__`.
         """
-        serial = self.__dict__.copy()
-        return serial
+        return self.__dict__.copy()
 
 
 class DummyStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeaseManager):
@@ -169,11 +166,10 @@ class DummyStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         return self.leases[partition_id]
 
     async def get_all_leases(self):
-        results = []
-
-        for partition_id in self.leases.keys():
-            results.append(self.get_lease_async(partition_id))
-        return results
+        return [
+            self.get_lease_async(partition_id)
+            for partition_id in self.leases.keys()
+        ]
 
     async def create_lease_if_not_exists_async(self, partition_id):
         lease = self.leases[partition_id]
